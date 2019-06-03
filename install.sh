@@ -5,8 +5,9 @@ BTWMAIN=main.sh
 BTWCOLORS=colors.sh
 BTWREPO=bash-tweaks-etc
 BTWDIR=.bash-tweaks
+NANOCONF=nanorc
 I=1
-STEPS=3
+STEPS=5
 
 #
 # Check
@@ -59,4 +60,16 @@ fi
 echo "[$I/$STEPS] Done"
 I=$((I+1))
 
-# TODO: Add Vim, Nano configs and maybe something else
+#
+# Activate MC tweaks
+#
+echo "[$I/$STEPS] Activating MC tweaks"
+sed -i 's#use_internal_edit=false#use_internal_edit=true#' ~/.config/mc/ini
+I=$((I+1))
+
+#
+# Activate Nano tweaks
+#
+echo "[$I/$STEPS] Activating Nano tweaks"
+cp $NANOCONF ~/.nanorc
+I=$((I+1))
