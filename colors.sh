@@ -1,6 +1,6 @@
 # Reset
 CR='\[\e[0m\]'          # Color reset
-# Color_Off='\e[0m'       # Text Reset
+Color_Off='\e[0m'       # Text Reset
 
 # Regular Colors
 Black='\e[0;30m'        # Black

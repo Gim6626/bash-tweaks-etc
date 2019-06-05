@@ -1,7 +1,9 @@
 source ~/.bash-tweaks/colors.sh
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
-export PS1="\[$BGreen\][\A]$CR\u@\h\[$BBlue\][\W]$CR\$ "
+export PS_DATE_COLOR=$BGreen
+export PS_CWD_COLOR=$BBlue
+export PS1="\[$PS_DATE_COLOR\][\A]$CR\u@\h\[$PS_CWD_COLOR\][\W]$CR\$ "
 alias grep='grep --color'
 alias less='less -RN'
 alias mc='mc --skin=modarin256'
