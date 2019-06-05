@@ -6,6 +6,7 @@ BTWCOLORS=colors.sh
 BTWREPO=bash-tweaks-etc
 BTWDIR=.bash-tweaks
 NANOCONF=nanorc
+NANOCONF_SYSTEM_PATH=~/.nanorc
 I=1
 STEPS=5
 
@@ -65,11 +66,25 @@ I=$((I+1))
 #
 echo "[$I/$STEPS] Activating MC tweaks"
 sed -i 's#use_internal_edit=false#use_internal_edit=true#' ~/.config/mc/ini
+echo "[$I/$STEPS] Done"
 I=$((I+1))
 
 #
 # Activate Nano tweaks
 #
 echo "[$I/$STEPS] Activating Nano tweaks"
-cp $NANOCONF ~/.nanorc
+if [ -f $NANOCONF_SYSTEM_PATH ]
+then
+  read -p "  File $NANOCONF_SYSTEM_PATH already exists, overwrite? (y/N): " confirm
+  if [[ "$confirm" == "y" ]]
+  then
+    echo "  Overwriting"
+    cp $NANOCONF $NANOCONF_SYSTEM_PATH
+  else
+    echo "  Skipping"
+  fi
+else
+  cp $NANOCONF $NANOCONF_SYSTEM_PATH
+fi
+echo "[$I/$STEPS] Done"
 I=$((I+1))
