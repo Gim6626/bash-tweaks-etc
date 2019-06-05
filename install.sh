@@ -134,8 +134,8 @@ I=$((I+1))
 echo "[$I/$STEPS] Activating Nano tweaks"
 if [ -f $NANOCONF_SYSTEM_PATH ]
 then
-  read -p "  File $NANOCONF_SYSTEM_PATH already exists, overwrite? (y/N): " confirm
-  if [[ "$confirm" == "y" ]]
+  read -p "  File $NANOCONF_SYSTEM_PATH already exists, overwrite? (y/N): " CONFIRM
+  if [[ "$CONFIRM" == "y" ]]
   then
     echo "  Overwriting"
     cp $NANOCONF $NANOCONF_SYSTEM_PATH
