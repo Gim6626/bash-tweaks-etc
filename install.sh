@@ -34,7 +34,7 @@ I=$((I+1))
 #
 # Install
 #
-echo "[$I/$STEPS] Installing bash tweaks"
+echo "[$I/$STEPS] Installing bash tweaks files"
 # TODO: Make output more detailed and installation more "clever"
 echo "  Creating '$BTWDIR'"
 mkdir -p ~/$BTWDIR
