@@ -11,6 +11,4 @@ alias mcedit='mcedit --skin=modarin256'
 export EDITOR="mcedit --skin=modarin256"
 bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
-export HISTSIZE=10000
-export HISTFILESIZE=10000
 export PATH=/sbin:$PATH
