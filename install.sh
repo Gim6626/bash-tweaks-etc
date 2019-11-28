@@ -128,6 +128,7 @@ I=$((I+1))
 echo "[$I/$STEPS] Activating MC tweaks"
 sed -i 's#use_internal_edit=false#use_internal_edit=true#' ~/.config/mc/ini # For new versions
 sed -i 's#use_internal_edit=0#use_internal_edit=1#' ~/.config/mc/ini # For old versions
+sed -i 's#editor_fill_tabs_with_spaces=false#editor_fill_tabs_with_spaces=true#' ~/.config/mc/ini
 echo "[$I/$STEPS] Done"
 I=$((I+1))
 
