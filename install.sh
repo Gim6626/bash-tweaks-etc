@@ -117,8 +117,8 @@ else
     echo "source \"\$HOME/$BTWDIR/$BTWMAIN\"" >> ~/.bashrc
 fi
 echo "  Tweaking history sizes in '~/.bashrc'"
-sed -i -E 's#(export HISTSIZE).*#\1=10000#' ~/.bashrc
-sed -i -E 's#(export HISTFILESIZE).*#\1=10000#' ~/.bashrc
+sed -i -E 's#((export )?HISTSIZE).*#\1=10000#' ~/.bashrc
+sed -i -E 's#((export )?HISTFILESIZE).*#\1=10000#' ~/.bashrc
 echo "[$I/$STEPS] Done"
 I=$((I+1))
 
