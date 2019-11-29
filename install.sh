@@ -5,13 +5,64 @@ BTWMAIN=main.sh
 BTWCOLORS=colors.sh
 BTWREPO=bash-tweaks-etc
 BTWDIR=.bash-tweaks
-NANOCONF=nanorc
-NANOCONF_SYSTEM_PATH="$HOME/.nanorc"
+NANO_CONFIG=nanorc
+NANO_CONFIG_SYSTEM_PATH="$HOME/.nanorc"
+MC_CONFIG_SYSTEM_PATH="$HOME/.config/mc/ini"
+printf -v CUR_DATETIME_STAMP '%(%Y-%m-%d_%H-%M-%S)T' -1
 I=1
 STEPS=5
 
 PS_DATE_COLOR_STR=""
 PS_CWD_COLOR_STR=""
+OVERWRITE=ask
+SUPPORTED_COLORS='black, red, green, yellow, blue, purple, cyan, white'
+
+function show_help
+{
+    echo "Usage: $0 [-h] [-d COLOR] [-c COLOR] [-o]"
+    echo
+    echo "        -h            - help"
+    echo "        -d COLOR      - set bash prompt date color, supported colors: $SUPPORTED_COLORS"
+    echo "        -c COLOR      - set bash prompt CWD color, supported colors: $SUPPORTED_COLORS"
+    echo "        -o true|false - overwrite configs or not (default is ask)"
+}
+
+function hr_color_to_code
+{
+    HR_COLOR=$1
+    TARGET_VARIABLE_NAME=$2
+    case "$HR_COLOR" in
+    "black")
+        COLOR_STR="\$BBlack"
+        ;;
+    "red")
+        COLOR_STR="\$BRed"
+        ;;
+    "green")
+        COLOR_STR="\$BGreen"
+        ;;
+    "yellow")
+        COLOR_STR="\$BYellow"
+        ;;
+    "blue")
+        COLOR_STR="\$BBlue"
+        ;;
+    "purple")
+        COLOR_STR="\$BPurple"
+        ;;
+    "cyan")
+        COLOR_STR="\$BCyan"
+        ;;
+    "white")
+        COLOR_STR="\$BWhite"
+        ;;
+    *)
+        echo "Invalid color \"$HR_COLOR\", available are: $SUPPORTED_COLORS"
+        exit 1
+        ;;
+    esac
+    eval "$TARGET_VARIABLE_NAME='$COLOR_STR'"
+}
 
 function ask_color
 {
@@ -20,7 +71,7 @@ function ask_color
     DEFAULT_COLOR=$3
     TARGET_VARIABLE_NAME=$4
     echo "  Choose color for $PURPOSE:"
-    . "$HOME/$BTWDIR/$BTWCOLORS"
+    . "$PWD/$BTWCOLORS"
     echo -e "  1. Black ${BBlack}${PURPOSE}${Color_Off}"
     echo -e "  2. Red ${BRed}${PURPOSE}${Color_Off}"
     echo -e "  3. Green ${BGreen}${PURPOSE}${Color_Off}"
@@ -61,6 +112,27 @@ function ask_color
     esac
     eval "$TARGET_VARIABLE_NAME='$COLOR_STR'"
 }
+
+#
+# Parse command line args
+#
+OPTIND=1
+while getopts 'hd:c:o:' opt; do
+    case "$opt" in
+    h)
+        show_help
+        exit 0
+        ;;
+    d)  hr_color_to_code "$OPTARG" PS_DATE_COLOR_STR
+        ;;
+    c)  hr_color_to_code "$OPTARG" PS_CWD_COLOR_STR
+        ;;
+    o)  OVERWRITE=$OPTARG
+        ;;
+    esac
+done
+# echo $PS_DATE_COLOR_STR
+# exit
 
 #
 # Check
@@ -105,9 +177,15 @@ I=$((I+1))
 echo "[$I/$STEPS] Activating bash tweaks"
 echo "  Bash tweaks sets shell prompt to something like \"[11:36]dvinokurov@DVinokurov-WorkPC[~]$\"."
 echo "  You could customize colors for date and current working dir (CWD) in this prompt."
-ask_color date 3 Green PS_DATE_COLOR_STR
+if [ -z $PS_DATE_COLOR_STR ]
+then
+    ask_color date 3 Green PS_DATE_COLOR_STR
+fi
 sed -i "s#export PS_DATE_COLOR=.*#export PS_DATE_COLOR=$PS_DATE_COLOR_STR#" "$HOME/$BTWDIR/$BTWMAIN"
-ask_color CWD 5 Blue PS_CWD_COLOR_STR
+if [ -z $PS_CWD_COLOR_STR ]
+then
+    ask_color CWD 5 Blue PS_CWD_COLOR_STR
+fi
 sed -i "s#export PS_CWD_COLOR=.*#export PS_CWD_COLOR=$PS_CWD_COLOR_STR#" "$HOME/$BTWDIR/$BTWMAIN"
 if grep "source \"\$HOME/$BTWDIR/$BTWMAIN\"" ~/.bashrc 2>&1 >/dev/null
 then
@@ -125,29 +203,41 @@ I=$((I+1))
 #
 # Activate MC tweaks
 #
-echo "[$I/$STEPS] Activating MC tweaks"
-sed -i 's#use_internal_edit=false#use_internal_edit=true#' ~/.config/mc/ini # For new versions
-sed -i 's#use_internal_edit=0#use_internal_edit=1#' ~/.config/mc/ini # For old versions
-sed -i 's#editor_fill_tabs_with_spaces=false#editor_fill_tabs_with_spaces=true#' ~/.config/mc/ini
+MC_CONFIG_BACKUP_PATH=${MC_CONFIG_SYSTEM_PATH}_${CUR_DATETIME_STAMP}.bak
+cp "$MC_CONFIG_SYSTEM_PATH" "$MC_CONFIG_BACKUP_PATH"
+echo "[$I/$STEPS] Activating MC tweaks (backup saved to \"$MC_CONFIG_BACKUP_PATH\")"
+sed -i 's#use_internal_edit=false#use_internal_edit=true#' $MC_CONFIG_SYSTEM_PATH # For new versions
+sed -i 's#use_internal_edit=0#use_internal_edit=1#' $MC_CONFIG_SYSTEM_PATH # For old versions
+sed -i 's#editor_fill_tabs_with_spaces=false#editor_fill_tabs_with_spaces=true#' $MC_CONFIG_SYSTEM_PATH
 echo "[$I/$STEPS] Done"
 I=$((I+1))
 
 #
 # Activate Nano tweaks
 #
+NANO_CONFIG_BACKUP_PATH=${NANO_CONFIG_SYSTEM_PATH}_${CUR_DATETIME_STAMP}.bak
 echo "[$I/$STEPS] Activating Nano tweaks"
-if [ -f "$NANOCONF_SYSTEM_PATH" ]
+if [ -f "$NANO_CONFIG_SYSTEM_PATH" ]
 then
-    read -p "  File $NANOCONF_SYSTEM_PATH already exists, overwrite? (y/N): " CONFIRM
+    if [ $OVERWRITE = 'ask' ]
+    then
+        read -p "  File $NANO_CONFIG_SYSTEM_PATH already exists, overwrite? (y/N): " CONFIRM
+    elif [ $OVERWRITE = 'true' ]
+    then
+        CONFIRM=y
+    else
+        CONFIRM=n
+    fi
     if [[ "$CONFIRM" == "y" ]]
     then
-        echo "  Overwriting"
-        cp "$NANOCONF" "$NANOCONF_SYSTEM_PATH"
+        echo "  Overwriting existing config (backup saved to \"$NANO_CONFIG_BACKUP_PATH\")"
+        cp "$NANO_CONFIG_SYSTEM_PATH" "$NANO_CONFIG_BACKUP_PATH"
+        cp "$NANO_CONFIG" "$NANO_CONFIG_SYSTEM_PATH"
     else
-        echo "  Skipping"
+        echo "  Config already exists, skipping"
     fi
 else
-    cp "$NANOCONF" "$NANOCONF_SYSTEM_PATH"
+    cp "$NANO_CONFIG" "$NANO_CONFIG_SYSTEM_PATH"
 fi
 echo "[$I/$STEPS] Done"
 I=$((I+1))
