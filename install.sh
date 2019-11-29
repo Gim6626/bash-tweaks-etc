@@ -5,6 +5,7 @@ BTWMAIN=main.sh
 BTWCOLORS=colors.sh
 BTWREPO=bash-tweaks-etc
 BTWDIR=.bash-tweaks
+MC_DEFAULT_CONFIG=mc.ini.default
 NANO_CONFIG=nanorc
 NANO_CONFIG_SYSTEM_PATH="$HOME/.nanorc"
 MC_CONFIG_SYSTEM_PATH="$HOME/.config/mc/ini"
@@ -208,11 +209,19 @@ I=$((I+1))
 # Activate MC tweaks
 #
 MC_CONFIG_BACKUP_PATH=${MC_CONFIG_SYSTEM_PATH}_${CUR_DATETIME_STAMP}.bak
-cp "$MC_CONFIG_SYSTEM_PATH" "$MC_CONFIG_BACKUP_PATH"
-echo "[$I/$STEPS] Activating MC tweaks (backup saved to \"$MC_CONFIG_BACKUP_PATH\")"
-sed -i 's#use_internal_edit=false#use_internal_edit=true#' $MC_CONFIG_SYSTEM_PATH # For new versions
-sed -i 's#use_internal_edit=0#use_internal_edit=1#' $MC_CONFIG_SYSTEM_PATH # For old versions
-sed -i 's#editor_fill_tabs_with_spaces=false#editor_fill_tabs_with_spaces=true#' $MC_CONFIG_SYSTEM_PATH
+echo "[$I/$STEPS] Activating MC tweaks"
+if [ -f "$MC_CONFIG_SYSTEM_PATH" ]
+then
+    echo "  MC config found, tweaking it (backup saved to \"$MC_CONFIG_BACKUP_PATH\")"
+    cp "$MC_CONFIG_SYSTEM_PATH" "$MC_CONFIG_BACKUP_PATH"
+    sed -i 's#use_internal_edit=false#use_internal_edit=true#' $MC_CONFIG_SYSTEM_PATH # For new versions
+    sed -i 's#use_internal_edit=0#use_internal_edit=1#' $MC_CONFIG_SYSTEM_PATH # For old versions
+    sed -i 's#editor_fill_tabs_with_spaces=false#editor_fill_tabs_with_spaces=true#' $MC_CONFIG_SYSTEM_PATH
+else
+    echo "  MC config not found, copying default one"
+    mkdir -p `dirname "$MC_CONFIG_SYSTEM_PATH"`
+    cp "$MC_DEFAULT_CONFIG" "$MC_CONFIG_SYSTEM_PATH"
+fi
 echo "[$I/$STEPS] Done"
 I=$((I+1))
 
