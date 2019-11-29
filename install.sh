@@ -180,11 +180,15 @@ echo "  You could customize colors for date and current working dir (CWD) in thi
 if [ -z $PS_DATE_COLOR_STR ]
 then
     ask_color date 3 Green PS_DATE_COLOR_STR
+else
+    echo "  Used date color from command line args: $PS_DATE_COLOR_STR"
 fi
 sed -i "s#export PS_DATE_COLOR=.*#export PS_DATE_COLOR=$PS_DATE_COLOR_STR#" "$HOME/$BTWDIR/$BTWMAIN"
 if [ -z $PS_CWD_COLOR_STR ]
 then
     ask_color CWD 5 Blue PS_CWD_COLOR_STR
+else
+    echo "  Used CWD color from command line args: $PS_CWD_COLOR_STR"
 fi
 sed -i "s#export PS_CWD_COLOR=.*#export PS_CWD_COLOR=$PS_CWD_COLOR_STR#" "$HOME/$BTWDIR/$BTWMAIN"
 if grep "source \"\$HOME/$BTWDIR/$BTWMAIN\"" ~/.bashrc 2>&1 >/dev/null
