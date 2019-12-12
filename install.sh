@@ -134,8 +134,7 @@ function check_mc_skin_name()
 OPTIND=1
 while getopts 'hd:c:o:m:' opt; do
     case "$opt" in
-    h)
-        show_help
+    h)  show_help
         exit 0
         ;;
     d)  hr_color_to_code "$OPTARG" PS_DATE_COLOR_STR
