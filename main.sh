@@ -1,3 +1,12 @@
+#!/bin/bash
+# "BASH tweaks etc"
+#
+# Copyleft 2017-2019
+# MIT License
+# Author: Dmitriy Vinokurov
+# Email: gim6626@gmail.com
+# Questions and contributions are welcome at https://github.com/Gim6626/bash-tweaks-etc
+
 source ~/.bash-tweaks/colors.sh
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
