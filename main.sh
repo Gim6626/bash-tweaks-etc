@@ -11,10 +11,11 @@ else
 fi
 alias grep='grep --color'
 alias less='less -RN'
-alias mc='mc --skin=modarin256'
-alias mcedit='mcedit --skin=modarin256'
-alias mcview='mcview --skin=modarin256'
-export EDITOR="mcedit --skin=modarin256"
+export MC_SKIN='default'
+alias mc="mc --skin=$MC_SKIN"
+alias mcedit="mcedit --skin=$MC_SKIN"
+alias mcview="mcview --skin=$MC_SKIN"
+export EDITOR="mcedit --skin=$MC_SKIN"
 bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
 export PATH=/sbin:$PATH

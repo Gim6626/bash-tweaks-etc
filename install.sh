@@ -16,16 +16,19 @@ STEPS=5
 PS_DATE_COLOR_STR=""
 PS_CWD_COLOR_STR=""
 OVERWRITE=ask
+MC_SKIN=""
+MC_SKINS_DIR="/usr/share/mc/skins/"
 SUPPORTED_COLORS='black, red, green, yellow, blue, purple, cyan, white'
 
 function show_help
 {
-    echo "Usage: $0 [-h] [-d COLOR] [-c COLOR] [-o]"
+    echo "Usage: $0 [-h] [-d COLOR] [-c COLOR] [-m MC_SKIN] [-o]"
     echo
     echo "        -h            - help"
     echo "        -d COLOR      - set bash prompt date color, supported colors: $SUPPORTED_COLORS"
     echo "        -c COLOR      - set bash prompt CWD color, supported colors: $SUPPORTED_COLORS"
     echo "        -o true|false - overwrite configs or not (default is ask)"
+    echo "        -m MC_SKIN    - choose from \"${MC_SKINS_DIR}\", type without \".ini\" and path, only file name"
 }
 
 function hr_color_to_code
@@ -114,11 +117,22 @@ function ask_color
     eval "$TARGET_VARIABLE_NAME='$COLOR_STR'"
 }
 
+function check_mc_skin_name()
+{
+    SKIN_NAME=$1
+    if [ -f "${MC_SKINS_DIR}/${SKIN_NAME}.ini" ]
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
 #
 # Parse command line args
 #
 OPTIND=1
-while getopts 'hd:c:o:' opt; do
+while getopts 'hd:c:o:m:' opt; do
     case "$opt" in
     h)
         show_help
@@ -129,6 +143,13 @@ while getopts 'hd:c:o:' opt; do
     c)  hr_color_to_code "$OPTARG" PS_CWD_COLOR_STR
         ;;
     o)  OVERWRITE=$OPTARG
+        ;;
+    m)  MC_SKIN=$OPTARG
+        if ! check_mc_skin_name $MC_SKIN
+        then
+            echo "Error: Bad skin name \"${MC_SKIN}\", check \"${MC_SKINS_DIR}\" directory and try again"
+            exit 1
+        fi
         ;;
     esac
 done
@@ -222,6 +243,62 @@ else
     mkdir -p `dirname "$MC_CONFIG_SYSTEM_PATH"`
     cp "$MC_DEFAULT_CONFIG" "$MC_CONFIG_SYSTEM_PATH"
 fi
+echo "  MC skin customization"
+if [ -z "$MC_SKIN" ]
+then
+    while true
+    do
+    echo "    Skins examples:"
+    echo "    1. \"default\", FAR-like blue-white"
+    echo "    2. Light yellow theme \"sand256\" (*)"
+    echo "    3. Dark \"darkfar\""
+    echo "    4. Prettier dark \"xoria256\" (*)"
+    echo "    5. Soft dark \"modarin256\" (*)"
+    echo "    6. Other (you can choose from \"${MC_SKINS_DIR}\")"
+    echo "    (*) - 256 colors terminal required, it is quite common, but rare on some terminals MC may fall back to default theme"
+    read -p "    Enter your choice: " MC_SKIN_CHOICE
+    case "$MC_SKIN_CHOICE" in
+        "1")
+            MC_SKIN="default"
+            break
+            ;;
+        "2")
+            MC_SKIN="sand256"
+            break
+            ;;
+        "3")
+            MC_SKIN="darkfar"
+            break
+            ;;
+        "4")
+            MC_SKIN="xoria256"
+            break
+            ;;
+        "5")
+            MC_SKIN="modarin256"
+            break
+            ;;
+        "6")
+            read -p "    Type skin name, chosen from \"${MC_SKINS_DIR}\" without \".ini\" and path, only file name: " MC_SKIN
+            if check_mc_skin_name $MC_SKIN
+            then
+                break
+            else
+                echo "    Error: Bad skin name \"${MC_SKIN}\", check \"${MC_SKINS_DIR}\" directory and try again"
+                continue
+            fi
+            ;;
+        *)
+            echo "    Error: Wrong choice, try again"
+            continue
+            ;;
+        esac
+    done
+    echo "    Using selected MC skin: $MC_SKIN"
+else
+    echo "    Using MC skin from command line args: $MC_SKIN"
+fi
+sed -i "s#export MC_SKIN=.*#export MC_SKIN='$MC_SKIN'#" "$HOME/$BTWDIR/$BTWMAIN"
 echo "[$I/$STEPS] Done"
 I=$((I+1))
 
