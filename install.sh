@@ -244,6 +244,7 @@ then
     sed -i 's#use_internal_edit=false#use_internal_edit=true#' $MC_CONFIG_SYSTEM_PATH # For new versions
     sed -i 's#use_internal_edit=0#use_internal_edit=1#' $MC_CONFIG_SYSTEM_PATH # For old versions
     sed -i 's#editor_fill_tabs_with_spaces=false#editor_fill_tabs_with_spaces=true#' $MC_CONFIG_SYSTEM_PATH
+    sed -i 's#editor_tab_spacing=.*#editor_tab_spacing=4#' $MC_CONFIG_SYSTEM_PATH
 else
     echo "  MC config not found, copying default one"
     mkdir -p `dirname "$MC_CONFIG_SYSTEM_PATH"`
