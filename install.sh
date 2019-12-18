@@ -16,7 +16,7 @@ MC_DEFAULT_CONFIG=mc.ini.default
 NANO_CONFIG=nanorc
 NANO_CONFIG_SYSTEM_PATH="$HOME/.nanorc"
 MC_CONFIG_SYSTEM_PATH="$HOME/.config/mc/ini"
-printf -v CUR_DATETIME_STAMP '%(%Y-%m-%d_%H-%M-%S)T' -1
+CUR_DATETIME_STAMP=`date '+%Y-%m-%d_%H-%M-%S'`
 I=1
 STEPS=5
 
