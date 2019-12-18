@@ -10,6 +10,6 @@ What this repo (I mean `install.sh` script) does:
 5. Add context history search to BASH.
 6. Change Nano and MC settings related to tabs'n'spaces, set 4 spaces tabs and fill tabs with spaces (controversial moment, yes, but suits for me).
 
-Fill free to send feedback to gim6626@gmail.com.
+See newest version at https://github.com/Gim6626/bash-tweaks-etc and fill free to send feedback to gim6626@gmail.com.
 
 *Dmitriy Vinokurov*
