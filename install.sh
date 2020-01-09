@@ -15,6 +15,8 @@ BTWDIR=.bash-tweaks
 MC_DEFAULT_CONFIG=mc.ini.default
 NANO_CONFIG=nanorc
 NANO_CONFIG_SYSTEM_PATH="$HOME/.nanorc"
+VIM_CONFIG=vimrc
+VIM_CONFIG_SYSTEM_PATH="$HOME/.vim/vimrc"
 MC_CONFIG_SYSTEM_PATH="$HOME/.config/mc/ini"
 CUR_DATETIME_STAMP=`date '+%Y-%m-%d_%H-%M-%S'`
 I=1
@@ -338,3 +340,35 @@ else
 fi
 echo "[$I/$STEPS] Done"
 I=$((I+1))
+
+#
+# Activate Vim tweaks
+#
+VIM_CONFIG_BACKUP_PATH=${VIM_CONFIG_SYSTEM_PATH}_${CUR_DATETIME_STAMP}.bak
+echo "[$I/$STEPS] Activating Vim tweaks"
+if [ -f "$VIM_CONFIG_SYSTEM_PATH" ]
+then
+    if [ $OVERWRITE = 'ask' ]
+    then
+        read -p "  File $VIM_CONFIG_SYSTEM_PATH already exists, overwrite? (y/N): " CONFIRM
+    elif [ $OVERWRITE = 'true' ]
+    then
+        CONFIRM=y
+    else
+        CONFIRM=n
+    fi
+    if [[ "$CONFIRM" == "y" ]]
+    then
+        echo "  Overwriting existing config (backup saved to \"$VIM_CONFIG_BACKUP_PATH\")"
+        cp "$VIM_CONFIG_SYSTEM_PATH" "$VIM_CONFIG_BACKUP_PATH"
+        cp "$VIM_CONFIG" "$VIM_CONFIG_SYSTEM_PATH"
+    else
+        echo "  Config already exists, skipping"
+    fi
+else
+    mkdir -p `dirname "$VIM_CONFIG_SYSTEM_PATH"`
+    cp "$VIM_CONFIG" "$VIM_CONFIG_SYSTEM_PATH"
+fi
+echo "[$I/$STEPS] Done"
+I=$((I+1))
+
