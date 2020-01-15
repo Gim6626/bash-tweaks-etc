@@ -157,11 +157,18 @@ while getopts 'hd:c:o:m:e:' opt; do
         ;;
     o)  OVERWRITE=$OPTARG
         ;;
-    e)  CUSTOM_EDITOR=$OPTARG
-        if [ "${CUSTOM_EDITOR}" == 'mcedit' ]
-        then
-            CUSTOM_EDITOR="mcedit --skin=\$MC_SKIN"
-        fi
+    e)  case "$OPTARG" in
+            nano|vim|emacs)
+                CUSTOM_EDITOR="$OPTARG"
+                ;;
+            mcedit)
+                CUSTOM_EDITOR="mcedit --skin=\$MC_SKIN"
+                ;;
+            *)
+                echo "Invalid editor, supported are: $SUPPORTED_EDITORS"
+                exit 1
+                ;;
+        esac
         ;;
     m)  MC_SKIN=$OPTARG
         if ! check_mc_skin_name $MC_SKIN
