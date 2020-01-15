@@ -18,9 +18,12 @@ NANO_CONFIG_SYSTEM_PATH="$HOME/.nanorc"
 VIM_CONFIG=vimrc
 VIM_CONFIG_SYSTEM_PATH="$HOME/.vim/vimrc"
 MC_CONFIG_SYSTEM_PATH="$HOME/.config/mc/ini"
+MAILCAP_CONFIG_SYSTEM_PATH="$HOME/.mailcap"
 CUR_DATETIME_STAMP=`date '+%Y-%m-%d_%H-%M-%S'`
 I=1
 STEPS=5
+
+CUSTOM_EDITOR=""
 
 PS_DATE_COLOR_STR=""
 PS_CWD_COLOR_STR=""
@@ -28,6 +31,7 @@ OVERWRITE=ask
 MC_SKIN=""
 MC_SKINS_DIR="/usr/share/mc/skins/"
 SUPPORTED_COLORS='black, red, green, yellow, blue, purple, cyan, white'
+SUPPORTED_EDITORS='nano, mcedit, vim, emacs'
 
 function show_help
 {
@@ -36,6 +40,7 @@ function show_help
     echo "        -h            - help"
     echo "        -d COLOR      - set bash prompt date color, supported colors: $SUPPORTED_COLORS"
     echo "        -c COLOR      - set bash prompt CWD color, supported colors: $SUPPORTED_COLORS"
+    echo "        -e EDIT_CMD   - set console editor command, supported editors: $SUPPORTED_EDITORS"
     echo "        -o true|false - overwrite configs or not (default is ask)"
     echo "        -m MC_SKIN    - choose from \"${MC_SKINS_DIR}\", type without \".ini\" and path, only file name"
 }
@@ -141,7 +146,7 @@ function check_mc_skin_name()
 # Parse command line args
 #
 OPTIND=1
-while getopts 'hd:c:o:m:' opt; do
+while getopts 'hd:c:o:m:e:' opt; do
     case "$opt" in
     h)  show_help
         exit 0
@@ -151,6 +156,12 @@ while getopts 'hd:c:o:m:' opt; do
     c)  hr_color_to_code "$OPTARG" PS_CWD_COLOR_STR
         ;;
     o)  OVERWRITE=$OPTARG
+        ;;
+    e)  CUSTOM_EDITOR=$OPTARG
+        if [ "${CUSTOM_EDITOR}" == 'mcedit' ]
+        then
+            CUSTOM_EDITOR="mcedit --skin=\$MC_SKIN"
+        fi
         ;;
     m)  MC_SKIN=$OPTARG
         if ! check_mc_skin_name $MC_SKIN
@@ -308,6 +319,88 @@ else
     echo "    Using MC skin from command line args: $MC_SKIN"
 fi
 sed -i "s#export MC_SKIN=.*#export MC_SKIN='$MC_SKIN'#" "$HOME/$BTWDIR/$BTWMAIN"
+echo "[$I/$STEPS] Done"
+I=$((I+1))
+
+#
+# Setup editor
+#
+echo "[$I/$STEPS] Setting up editor"
+if [ -z "${CUSTOM_EDITOR}" ]
+then
+    echo "  Choose editor"
+    while true
+    do
+        echo "    Examples:"
+        echo "    1. \"nano\" - most simple and suitable for everyone"
+        echo "    2. \"mcedit\" - a bit more functional but not complicated"
+        echo "    3. \"vim\" - most functional but complicated, for true UNIX fans"
+        echo "    4. \"emacs\" - another one most functional but complicated, for true GNU fans"
+        read -p "    Enter your choice: " MC_SKIN_CHOICE
+        case "$MC_SKIN_CHOICE" in
+            "1")
+                CUSTOM_EDITOR="nano"
+                break
+                ;;
+            "2")
+                CUSTOM_EDITOR="mcedit --skin=\$MC_SKIN"
+                break
+                ;;
+            "3")
+                CUSTOM_EDITOR="vim"
+                break
+                ;;
+            "4")
+                CUSTOM_EDITOR="emacs"
+                break
+                ;;
+            *)
+                echo "    Error: Wrong choice, try again"
+                continue
+                ;;
+        esac
+    done
+    echo "    Using selected custom editor: $CUSTOM_EDITOR"
+fi
+echo "export EDITOR=\"$CUSTOM_EDITOR\"" >> "$HOME/$BTWDIR/$BTWMAIN"
+echo "  Adding custom editor settings to \"$HOME/$BTWDIR/$BTWMAIN\""
+MAILCAP_CONFIG_NEEDS_REWRITE='false'
+MAILCAP_CONFIG_SYSTEM_BACKUP_PATH=${MAILCAP_CONFIG_SYSTEM_PATH}_${CUR_DATETIME_STAMP}.bak
+MAILCAP_CONFIG_PREV_EXISTED='false'
+if [ -f "$MAILCAP_CONFIG_SYSTEM_PATH" ]
+then
+    MAILCAP_CONFIG_PREV_EXISTED='true'
+    if [ $OVERWRITE = 'ask' ]
+    then
+        read -p "  File $MAILCAP_CONFIG_SYSTEM_PATH already exists, overwrite? (y/N): " CONFIRM
+    elif [ $OVERWRITE = 'true' ]
+    then
+        CONFIRM=y
+    else
+        CONFIRM=n
+    fi
+    if [[ "$CONFIRM" == "y" ]]
+    then
+        MAILCAP_CONFIG_NEEDS_REWRITE='true'
+    else
+        echo "  Config already exists, skipping"
+    fi
+else
+    MAILCAP_CONFIG_NEEDS_REWRITE='true'
+fi
+if [ "${MAILCAP_CONFIG_NEEDS_REWRITE}" == 'true' ]
+then
+    if [ "${MAILCAP_CONFIG_PREV_EXISTED}" == 'true' ]
+    then
+        echo "  Overwriting Mailcap config (backup saved to \"$MAILCAP_CONFIG_SYSTEM_BACKUP_PATH\")"
+    else
+        echo "  Adding Mailcap custom editor settings to \"$HOME/$BTWDIR/$BTWMAIN\""
+    fi
+    echo -n '' > "${MAILCAP_CONFIG_SYSTEM_PATH}"
+    CUSTOM_EDITOR_EXPANDED=`echo $CUSTOM_EDITOR | sed "s#\\$MC_SKIN#$MC_SKIN#"`
+    echo "text/*; less %s; edit=$CUSTOM_EDITOR_EXPANDED %s; needsterminal" >> "${MAILCAP_CONFIG_SYSTEM_PATH}"
+    echo "application/x-sh; less %s; edit=$CUSTOM_EDITOR_EXPANDED %s; needsterminal" >> "${MAILCAP_CONFIG_SYSTEM_PATH}"
+fi
 echo "[$I/$STEPS] Done"
 I=$((I+1))
 
