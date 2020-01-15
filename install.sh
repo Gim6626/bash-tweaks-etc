@@ -148,35 +148,41 @@ function check_mc_skin_name()
 OPTIND=1
 while getopts 'hd:c:o:m:e:' opt; do
     case "$opt" in
-    h)  show_help
-        exit 0
-        ;;
-    d)  hr_color_to_code "$OPTARG" PS_DATE_COLOR_STR
-        ;;
-    c)  hr_color_to_code "$OPTARG" PS_CWD_COLOR_STR
-        ;;
-    o)  OVERWRITE=$OPTARG
-        ;;
-    e)  case "$OPTARG" in
-            nano|vim|emacs)
-                CUSTOM_EDITOR="$OPTARG"
-                ;;
-            mcedit)
-                CUSTOM_EDITOR="mcedit --skin=\$MC_SKIN"
-                ;;
-            *)
-                echo "Invalid editor, supported are: $SUPPORTED_EDITORS"
+        h)
+            show_help
+            exit 0
+            ;;
+        d)
+            hr_color_to_code "$OPTARG" PS_DATE_COLOR_STR
+            ;;
+        c)
+            hr_color_to_code "$OPTARG" PS_CWD_COLOR_STR
+            ;;
+        o)
+            OVERWRITE=$OPTARG
+            ;;
+        e)
+            case "$OPTARG" in
+                nano|vim|emacs)
+                    CUSTOM_EDITOR="$OPTARG"
+                    ;;
+                mcedit)
+                    CUSTOM_EDITOR="mcedit --skin=\$MC_SKIN"
+                    ;;
+                *)
+                    echo "Invalid editor, supported are: $SUPPORTED_EDITORS"
+                    exit 1
+                    ;;
+            esac
+            ;;
+        m)
+            MC_SKIN=$OPTARG
+            if ! check_mc_skin_name $MC_SKIN
+            then
+                echo "Error: Bad skin name \"${MC_SKIN}\", check \"${MC_SKINS_DIR}\" directory and try again"
                 exit 1
-                ;;
-        esac
-        ;;
-    m)  MC_SKIN=$OPTARG
-        if ! check_mc_skin_name $MC_SKIN
-        then
-            echo "Error: Bad skin name \"${MC_SKIN}\", check \"${MC_SKINS_DIR}\" directory and try again"
-            exit 1
-        fi
-        ;;
+            fi
+            ;;
     esac
 done
 # echo $PS_DATE_COLOR_STR
