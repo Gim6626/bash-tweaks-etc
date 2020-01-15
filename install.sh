@@ -215,9 +215,9 @@ I=$((I+1))
 #
 echo "[$I/$STEPS] Installing bash tweaks files"
 # TODO: Make output more detailed and installation more "clever"
-echo "  Creating '$BTWDIR'"
+echo "  Creating (if doesn't exist) bash tweaks etc directory '$HOME/$BTWDIR'"
 mkdir -p "$HOME/$BTWDIR"
-echo "  Copying config files to '$BTWDIR'"
+echo "  Copying config files to it"
 echo "    $BTWMAIN"
 cp "$BTWMAIN" "$HOME/$BTWDIR"
 echo "    $BTWCOLORS"
