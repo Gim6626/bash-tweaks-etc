@@ -17,6 +17,8 @@ NANO_CONFIG=nanorc
 NANO_CONFIG_SYSTEM_PATH="$HOME/.nanorc"
 VIM_CONFIG=vimrc
 VIM_CONFIG_SYSTEM_PATH="$HOME/.vim/vimrc"
+TMUX_CONFIG=tmux.conf
+TMUX_CONFIG_SYSTEM_PATH="$HOME/.tmux.conf"
 MC_CONFIG_SYSTEM_PATH="$HOME/.config/mc/ini"
 MAILCAP_CONFIG_SYSTEM_PATH="$HOME/.mailcap"
 CUR_DATETIME_STAMP=`date '+%Y-%m-%d_%H-%M-%S'`
@@ -478,3 +480,32 @@ fi
 echo "[$I/$STEPS] Done"
 I=$((I+1))
 
+#
+# Activate Tmux tweaks
+#
+TMUX_CONFIG_BACKUP_PATH=${TMUX_CONFIG_SYSTEM_PATH}_${CUR_DATETIME_STAMP}.bak
+echo "[$I/$STEPS] Activating Tmux tweaks"
+if [ -f "$TMUX_CONFIG_SYSTEM_PATH" ]
+then
+    if [ $OVERWRITE = 'ask' ]
+    then
+        read -p "  File $TMUX_CONFIG_SYSTEM_PATH already exists, overwrite? (y/N): " CONFIRM
+    elif [ $OVERWRITE = 'true' ]
+    then
+        CONFIRM=y
+    else
+        CONFIRM=n
+    fi
+    if [[ "$CONFIRM" == "y" ]]
+    then
+        echo "  Overwriting existing config (backup saved to \"$TMUX_CONFIG_BACKUP_PATH\")"
+        cp "$TMUX_CONFIG_SYSTEM_PATH" "$TMUX_CONFIG_BACKUP_PATH"
+        cp "$TMUX_CONFIG" "$TMUX_CONFIG_SYSTEM_PATH"
+    else
+        echo "  Config already exists, skipping"
+    fi
+else
+    cp "$TMUX_CONFIG" "$TMUX_CONFIG_SYSTEM_PATH"
+fi
+echo "[$I/$STEPS] Done"
+I=$((I+1))
