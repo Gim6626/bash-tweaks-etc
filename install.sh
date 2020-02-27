@@ -37,7 +37,7 @@ SUPPORTED_EDITORS='nano, mcedit, vim, emacs'
 
 function main
 {
-    parse_command_line_args
+    parse_command_line_args "$@"
     check_required_files
     install_bash_tweaks
     install_mc_tweaks
@@ -513,4 +513,4 @@ function install_tmux_tweaks
     I=$((I+1))
 }
 
-main
+main "$@"
