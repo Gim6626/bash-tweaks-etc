@@ -25,6 +25,16 @@ CUR_DATETIME_STAMP=`date '+%Y-%m-%d_%H-%M-%S'`
 I=1
 STEPS=7
 
+if uname | grep Linux > /dev/null 2>&1
+then
+    OPTIONAL_DASH_I_FOR_SED="-i"
+    OS="Linux"
+elif uname | grep Darwin > /dev/null 2>&1
+then
+    OPTIONAL_DASH_I_FOR_SED=""
+    OS="Darwin"
+fi
+
 CUSTOM_EDITOR=""
 
 PS_DATE_COLOR_STR=""
@@ -241,14 +251,14 @@ function install_bash_tweaks
     else
         echo "  Used date color from command line args: $PS_DATE_COLOR_STR"
     fi
-    sed -i "s#export PS_DATE_COLOR=.*#export PS_DATE_COLOR=$PS_DATE_COLOR_STR#" "$HOME/$BTWDIR/$BTWMAIN"
+    sed $OPTIONAL_DASH_I_FOR_SED "s#export PS_DATE_COLOR=.*#export PS_DATE_COLOR=$PS_DATE_COLOR_STR#" "$HOME/$BTWDIR/$BTWMAIN"
     if [ -z $PS_CWD_COLOR_STR ]
     then
         ask_color CWD 5 Blue PS_CWD_COLOR_STR
     else
         echo "  Used CWD color from command line args: $PS_CWD_COLOR_STR"
     fi
-    sed -i "s#export PS_CWD_COLOR=.*#export PS_CWD_COLOR=$PS_CWD_COLOR_STR#" "$HOME/$BTWDIR/$BTWMAIN"
+    sed $OPTIONAL_DASH_I_FOR_SED "s#export PS_CWD_COLOR=.*#export PS_CWD_COLOR=$PS_CWD_COLOR_STR#" "$HOME/$BTWDIR/$BTWMAIN"
     if grep "source \"\$HOME/$BTWDIR/$BTWMAIN\"" ~/.bashrc 2>&1 >/dev/null
     then
         echo "  Main tweak file '~/$BTWDIR/$BTWMAIN' already included in '~/.bashrc', nothing to do"
@@ -257,8 +267,8 @@ function install_bash_tweaks
         echo "source \"\$HOME/$BTWDIR/$BTWMAIN\"" >> ~/.bashrc
     fi
     echo "  Tweaking history sizes in '~/.bashrc'"
-    sed -i -E 's#((export )?HISTSIZE).*#\1=10000#' ~/.bashrc
-    sed -i -E 's#((export )?HISTFILESIZE).*#\1=10000#' ~/.bashrc
+    sed $OPTIONAL_DASH_I_FOR_SED -E 's#((export )?HISTSIZE).*#\1=10000#' ~/.bashrc
+    sed $OPTIONAL_DASH_I_FOR_SED -E 's#((export )?HISTFILESIZE).*#\1=10000#' ~/.bashrc
     echo "[$I/$STEPS] Done"
     I=$((I+1))
 }
@@ -271,10 +281,10 @@ function install_mc_tweaks
     then
         echo "  MC config found, tweaking it (backup saved to \"$MC_CONFIG_BACKUP_PATH\")"
         cp "$MC_CONFIG_SYSTEM_PATH" "$MC_CONFIG_BACKUP_PATH"
-        sed -i 's#use_internal_edit=false#use_internal_edit=true#' $MC_CONFIG_SYSTEM_PATH # For new versions
-        sed -i 's#use_internal_edit=0#use_internal_edit=1#' $MC_CONFIG_SYSTEM_PATH # For old versions
-        sed -i 's#editor_fill_tabs_with_spaces=false#editor_fill_tabs_with_spaces=true#' $MC_CONFIG_SYSTEM_PATH
-        sed -i 's#editor_tab_spacing=.*#editor_tab_spacing=4#' $MC_CONFIG_SYSTEM_PATH
+        sed $OPTIONAL_DASH_I_FOR_SED 's#use_internal_edit=false#use_internal_edit=true#' $MC_CONFIG_SYSTEM_PATH # For new versions
+        sed $OPTIONAL_DASH_I_FOR_SED 's#use_internal_edit=0#use_internal_edit=1#' $MC_CONFIG_SYSTEM_PATH # For old versions
+        sed $OPTIONAL_DASH_I_FOR_SED 's#editor_fill_tabs_with_spaces=false#editor_fill_tabs_with_spaces=true#' $MC_CONFIG_SYSTEM_PATH
+        sed $OPTIONAL_DASH_I_FOR_SED 's#editor_tab_spacing=.*#editor_tab_spacing=4#' $MC_CONFIG_SYSTEM_PATH
     else
         echo "  MC config not found, copying default one"
         mkdir -p `dirname "$MC_CONFIG_SYSTEM_PATH"`
@@ -335,7 +345,7 @@ function install_mc_tweaks
     else
         echo "    Using MC skin from command line args: $MC_SKIN"
     fi
-    sed -i "s#export MC_SKIN=.*#export MC_SKIN='$MC_SKIN'#" "$HOME/$BTWDIR/$BTWMAIN"
+    sed $OPTIONAL_DASH_I_FOR_SED "s#export MC_SKIN=.*#export MC_SKIN='$MC_SKIN'#" "$HOME/$BTWDIR/$BTWMAIN"
     echo "[$I/$STEPS] Done"
     I=$((I+1))
 }
