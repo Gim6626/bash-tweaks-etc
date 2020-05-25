@@ -31,7 +31,7 @@ then
     OS="Linux"
 elif uname | grep Darwin > /dev/null 2>&1
 then
-    OPTIONAL_DASH_I_FOR_SED=""
+    OPTIONAL_DASH_I_FOR_SED="-i.bak"
     OS="Darwin"
 fi
 
