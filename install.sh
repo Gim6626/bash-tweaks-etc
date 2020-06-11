@@ -489,6 +489,16 @@ function install_vim_tweaks
         mkdir -p `dirname "$VIM_CONFIG_SYSTEM_PATH"`
         cp "$VIM_CONFIG" "$VIM_CONFIG_SYSTEM_PATH"
     fi
+    echo "  Installing Vim Airline plugin"
+    if [ -d "$HOME/.vim/pack/dist/start/vim-airline" ]
+    then
+        echo "    Already installed"
+    else
+        AIRLINE_PLUGIN_PATH="$HOME/.vim/pack/dist/start/vim-airline"
+        echo "    Cloning repo to \"$AIRLINE_PLUGIN_PATH\""
+        git clone https://github.com/vim-airline/vim-airline "$AIRLINE_PLUGIN_PATH"
+        echo "    Installed"
+    fi
     echo "[$I/$STEPS] Done"
     I=$((I+1))
 }
