@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # "BASH tweaks etc"
 #
 # Copyleft 2017-2019
