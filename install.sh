@@ -495,9 +495,7 @@ function install_vim_tweaks
         echo "    Already installed"
     else
         AIRLINE_PLUGIN_PATH="$HOME/.vim/pack/dist/start/vim-airline"
-        echo "    Cloning repo to \"$AIRLINE_PLUGIN_PATH\""
         git clone https://github.com/vim-airline/vim-airline "$AIRLINE_PLUGIN_PATH"
-        echo "    Installed"
     fi
     echo "[$I/$STEPS] Done"
     I=$((I+1))
