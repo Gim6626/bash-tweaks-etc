@@ -267,8 +267,8 @@ function install_bash_tweaks
         echo "source \"\$HOME/$BTWDIR/$BTWMAIN\"" >> ~/.bashrc
     fi
     echo "  Tweaking history sizes in '~/.bashrc'"
-    sed $OPTIONAL_DASH_I_FOR_SED -E 's#((export )?HISTSIZE).*#\1=10000#' ~/.bashrc
-    sed $OPTIONAL_DASH_I_FOR_SED -E 's#((export )?HISTFILESIZE).*#\1=10000#' ~/.bashrc
+    sed $OPTIONAL_DASH_I_FOR_SED -E 's#((export )?HISTSIZE).*#\1=100000#' ~/.bashrc
+    sed $OPTIONAL_DASH_I_FOR_SED -E 's#((export )?HISTFILESIZE).*#\1=100000#' ~/.bashrc
     echo "[$I/$STEPS] Done"
     I=$((I+1))
 }
