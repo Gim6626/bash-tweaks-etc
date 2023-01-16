@@ -28,3 +28,5 @@ export EDITOR="mcedit --skin=$MC_SKIN"
 bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
 export PATH=/sbin:$PATH
+export HISTSIZE=10000
+export HISTFILESIZE=10000
