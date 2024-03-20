@@ -7,6 +7,8 @@
 # Email: gim6626@gmail.com
 # Questions and contributions are welcome at https://github.com/Gim6626/bash-tweaks-etc
 
+# TODO: Refactor, too many lines of code
+
 set -e
 BTWMAIN=main.sh
 BTWCOLORS=colors.sh
@@ -55,6 +57,7 @@ function main
     install_nano_tweaks
     install_vim_tweaks
     install_tmux_tweaks
+    # TODO: Add call for `screen` tweaks installation
 }
 
 function show_help
@@ -500,6 +503,8 @@ function install_vim_tweaks
     echo "[$I/$STEPS] Done"
     I=$((I+1))
 }
+
+# TODO: Implement function for `screen` tweaks
 
 function install_tmux_tweaks
 {
