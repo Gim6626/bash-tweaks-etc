@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # "BASH tweaks etc"
 #
-# Copyleft 2017-2019
+# Copyleft 2017-2024
 # GPL v3 License or later
 # Author: Dmitriy Vinokurov
 # Email: gim6626@gmail.com
