@@ -1,5 +1,7 @@
 # BASH TWEAKS ETC
 
+![](img/logo256.png)
+
 BASH, MC, Nano, Vim, Tmux miscellanous small customizations with easy to use interactive install script.
 
 What this repo (i.e. `install.sh` script) does:
