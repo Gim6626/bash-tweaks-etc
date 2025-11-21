@@ -25,8 +25,11 @@ alias mc="mc --skin=$MC_SKIN"
 alias mcedit="mcedit --skin=$MC_SKIN"
 alias mcview="mcview --skin=$MC_SKIN"
 export EDITOR="mcedit --skin=$MC_SKIN"
-bind '"\e[A": history-search-backward'
-bind '"\e[B": history-search-forward'
+if [[ $- = *i* ]]
+then
+    bind '"\e[A": history-search-backward'
+    bind '"\e[B": history-search-forward'
+fi
 export PATH=/sbin:$PATH
 export HISTSIZE=10000
 export HISTFILESIZE=10000
